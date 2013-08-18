@@ -3,42 +3,6 @@ require './spec/test_helper'
 puts "this test requires the rabbit mq broker to be running at localhost:5672 and some other publishing system to publish a message"
 puts "waiting for a message..."
 
-module Report
-    class Event
-        attr_reader :name, :type, :created_at, :data, :id
-
-        def initialize(data)
-            @name = data['name']
-            @id = data['entity_id']
-            @data = data['data']
-            @created_at = Time.parse(data['created_at'])
-            @type = data['entity_type']
-        end
-    end
-
-    class Listener
-        def initialize(bunny_connection)
-            @conn = bunny_connection
-            @channel = @conn.create_channel
-            @exchange = @channel.fanout('test.events')
-            @queue = @channel.queue('', exclusive: false, auto_delete: true)
-        end
-
-        def on_payload(&block)
-            @callback = block
-        end
-
-        def listen
-            @queue.subscribe(consumer_tag: 'test_listener', block: false, ack: true) do |info, properties, payload|
-                event = Report::Event.new(JSON.parse(payload))
-                @callback.call(event)
-            end
-
-            @queue.bind(@exchange)
-        end
-    end
-end
-
 message_received = false
 
 conn = Bunny.new('amqp://guest:guest@localhost:5672')
