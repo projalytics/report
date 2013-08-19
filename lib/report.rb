@@ -1,3 +1,4 @@
+require 'sequel'
 require 'report/event'
 require 'report/listener'
 
