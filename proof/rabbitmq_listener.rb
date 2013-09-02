@@ -13,7 +13,9 @@ ex = ch.fanout('test.events')
 
 created_at = Time.now
 
-listener = Report::Listener.new(conn)
+rmq = Report::Listener::RMQInitializer.new(conn)
+
+listener = Report::Listener.new(rmq)
 listener.on_payload do |event|
     puts 'message received'
     message_received = true
