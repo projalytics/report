@@ -22,7 +22,7 @@ if command == 'start'
     File.open(tmp_file, 'w') {|f| f.write(pid)}
 
     app = Report::App.new
-    app.listen
+    app.start
 else
     unless File.exists?(tmp_file)
         $stderr.puts "no running process detected. Pid file does not exist"
